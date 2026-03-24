@@ -1,0 +1,8 @@
+{
+  "name": "IP checker",
+  "category": "IP",
+  "description": "Получить информацию по своему IP.",
+  "author": "Ameight",
+  "version": "1.0.0",
+  "requires": ["requests"]
+}
