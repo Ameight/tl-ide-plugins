@@ -1,0 +1,8 @@
+{
+  "name": "Issue Info",
+  "category": "Jira",
+  "description": "Получить информацию по ключу задачи (PROJ-123).",
+  "author": "Ameight",
+  "version": "1.0.0",
+  "requires": ["requests"]
+}

@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Схема manifest.json для плагина tl-ide-plugins",
+  "required": ["name", "category", "description", "author", "version"],
+  "properties": {
+    "name":        { "type": "string", "description": "Название в сайдбаре" },
+    "category":    { "type": "string", "description": "Группа в сайдбаре (Jira, General, DevOps...)" },
+    "description": { "type": "string", "description": "Одна строка под заголовком" },
+    "author":      { "type": "string" },
+    "version":     { "type": "string", "description": "SemVer: 1.0.0" },
+    "requires":    { "type": "array",  "items": { "type": "string" }, "description": "pip-зависимости" }
+  }
+}
