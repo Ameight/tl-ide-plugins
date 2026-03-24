@@ -13,7 +13,7 @@
 import json
 from pathlib import Path
 
-REPO_RAW_BASE = "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/main"
+REPO_RAW_BASE = "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master"
 REGISTRY_FILE = Path("registry.json")
 SKIP_DIRS = {"__pycache__", ".git", ".github"}
 
