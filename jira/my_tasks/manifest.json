@@ -3,6 +3,7 @@
   "category": "Jira",
   "description": "Список открытых задач, назначенных на тебя.",
   "author": "Ameight",
-  "version": "1.0.0",
+  "version": "1.1.0",
+  "min_app_version": "1.1.0",
   "requires": ["requests"]
 }

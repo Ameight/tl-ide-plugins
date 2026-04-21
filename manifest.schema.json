@@ -3,11 +3,25 @@
   "description": "Схема manifest.json для плагина tl-ide-plugins",
   "required": ["name", "category", "description", "author", "version"],
   "properties": {
-    "name":        { "type": "string", "description": "Название в сайдбаре" },
-    "category":    { "type": "string", "description": "Группа в сайдбаре (Jira, General, DevOps...)" },
-    "description": { "type": "string", "description": "Одна строка под заголовком" },
-    "author":      { "type": "string" },
-    "version":     { "type": "string", "description": "SemVer: 1.0.0" },
-    "requires":    { "type": "array",  "items": { "type": "string" }, "description": "pip-зависимости" }
+    "name":            { "type": "string", "description": "Название в сайдбаре" },
+    "category":        { "type": "string", "description": "Группа в сайдбаре (Jira, General, DevOps...)" },
+    "description":     { "type": "string", "description": "Одна строка под заголовком" },
+    "author":          { "type": "string" },
+    "version":         { "type": "string", "description": "SemVer плагина: 1.0.0" },
+    "min_app_version": { "type": "string", "description": "Минимальная версия TL IDE: 1.1.0" },
+    "requires":        { "type": "array", "items": { "type": "string" }, "description": "pip-зависимости" },
+    "versions": {
+      "type": "array",
+      "description": "История версий для даунгрейда",
+      "items": {
+        "type": "object",
+        "required": ["version", "raw_url"],
+        "properties": {
+          "version": { "type": "string" },
+          "raw_url": { "type": "string" },
+          "changelog": { "type": "string" }
+        }
+      }
+    }
   }
 }
