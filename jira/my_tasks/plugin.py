@@ -15,6 +15,23 @@ class JiraMyTasksPlugin(PluginInterface):
     def get_category(self) -> str:
         return "Jira"
 
+    def get_config_key(self) -> str:
+        return "jira"
+
+    def get_required_env(self) -> dict:
+        return {
+            "JIRA_EMAIL": {
+                "label": "Jira Email",
+                "description": "Email аккаунта Jira",
+                "secret": False,
+            },
+            "JIRA_TOKEN": {
+                "label": "Jira API Token",
+                "description": "Jira → Profile → Security → API tokens",
+                "secret": True,
+            },
+        }
+
     def get_config_schema(self) -> dict:
         return {
             "project": {
@@ -30,16 +47,16 @@ class JiraMyTasksPlugin(PluginInterface):
         }
 
     def run(self, inputs: dict) -> str:
-        base_url = self.config.get("base_url", "").rstrip("/")
+        base_url = self.config.get("url", "").rstrip("/")
         email = os.getenv("JIRA_EMAIL", "")
         token = os.getenv("JIRA_TOKEN", "")
         project = inputs.get("project", "").strip()
         max_results = int(inputs.get("max_results") or 20)
 
         if not base_url:
-            return "❌ Укажи `base_url` в `config.yaml` → `plugins.jira_my_tasks`"
+            return "❌ Укажи `url` в `config.yaml` → `plugins.jira.url`"
         if not email or not token:
-            return "❌ Укажи `JIRA_EMAIL` и `JIRA_TOKEN` в `.env`"
+            return "❌ Укажи `JIRA_EMAIL` и `JIRA_TOKEN` (⚙ Настройки → Переменные окружения)"
 
         jql = "assignee = currentUser() AND statusCategory != Done ORDER BY updated DESC"
         if project:
