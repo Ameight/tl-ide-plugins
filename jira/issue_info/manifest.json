@@ -4,6 +4,6 @@
   "description": "Получить информацию по ключу задачи (PROJ-123).",
   "author": "Ameight",
   "version": "1.2.0",
-  "min_app_version": "1.1.0",
+  "min_app_version": "1.0.0",
   "requires": ["requests"]
 }
