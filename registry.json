@@ -1,7 +1,6 @@
 [
   {
     "id": "general/ip_checker",
-    "path": "general/ip_checker",
     "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master/general/ip_checker/plugin.py",
     "name": "IP checker",
     "category": "General",
@@ -15,7 +14,6 @@
   },
   {
     "id": "jira/issue_info",
-    "path": "jira/issue_info",
     "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master/jira/issue_info/plugin.py",
     "name": "Issue Info",
     "category": "Jira",
@@ -29,7 +27,6 @@
   },
   {
     "id": "jira/my_tasks",
-    "path": "jira/my_tasks",
     "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master/jira/my_tasks/plugin.py",
     "name": "My Tasks",
     "category": "Jira",
