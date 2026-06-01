@@ -1,5 +1,16 @@
 [
   {
+    "id": "general/example_plugin",
+    "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master/general/example_plugin/plugin.py",
+    "name": "Example: все возможности",
+    "category": "General",
+    "description": "Демонстрация всех типов полей, config-настроек и env-переменных.",
+    "author": "Ameight",
+    "version": "1.0.0",
+    "min_app_version": "1.1.0",
+    "requires": []
+  },
+  {
     "id": "general/ip_checker",
     "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master/general/ip_checker/plugin.py",
     "name": "IP checker",
@@ -7,32 +18,6 @@
     "description": "Получить информацию по своему IP.",
     "author": "Ameight",
     "version": "1.1.0",
-    "min_app_version": "1.0.0",
-    "requires": [
-      "requests"
-    ]
-  },
-  {
-    "id": "jira/issue_info",
-    "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master/jira/issue_info/plugin.py",
-    "name": "Issue Info",
-    "category": "Jira",
-    "description": "Получить информацию по ключу задачи (PROJ-123).",
-    "author": "Ameight",
-    "version": "1.2.0",
-    "min_app_version": "1.0.0",
-    "requires": [
-      "requests"
-    ]
-  },
-  {
-    "id": "jira/my_tasks",
-    "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master/jira/my_tasks/plugin.py",
-    "name": "My Tasks",
-    "category": "Jira",
-    "description": "Список открытых задач, назначенных на тебя.",
-    "author": "Ameight",
-    "version": "1.2.0",
     "min_app_version": "1.0.0",
     "requires": [
       "requests"

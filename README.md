@@ -4,6 +4,15 @@
 
 ---
 
+## Плагины
+
+| Плагин | Категория | Описание |
+|---|---|---|
+| [IP Checker](general/ip_checker/) | General | Определяет публичный IP-адрес машины |
+| [Example: все возможности](general/example_plugin/) | General | Демо всех типов полей и config-настроек |
+
+---
+
 ## Структура репозитория
 
 ```
@@ -24,16 +33,16 @@ tl-ide-plugins/
 ### 1. Создай папку
 
 ```
-general/my_new_plugin/
+general/my_plugin/
 ```
 
-Имя папки первого уровня — категория (отображается в сайдбаре).
+Имя папки первого уровня — категория (отображается в сайдбаре TL IDE).
 
 ### 2. Напиши `manifest.json`
 
 ```json
 {
-  "name": "My New Plugin",
+  "name": "My Plugin",
   "category": "General",
   "description": "Одна строка — что делает плагин.",
   "author": "твой_ник",
@@ -44,13 +53,13 @@ general/my_new_plugin/
 ```
 
 | Поле | Обязательно | Описание |
-|------|:-----------:|----------|
+|---|:-:|---|
 | `name` | ✅ | Название в сайдбаре |
-| `category` | ✅ | Группа (`Jira`, `General`, `DevOps`...) |
+| `category` | ✅ | Группа (`Jira`, `General`, `DevOps`…) |
 | `description` | ✅ | Одна строка под заголовком |
 | `author` | ✅ | GitHub ник |
-| `version` | ✅ | SemVer плагина: `1.0.0` |
-| `min_app_version` | — | Минимальная версия TL IDE. Если не указано — плагин совместим со всеми версиями |
+| `version` | ✅ | SemVer: `1.0.0` |
+| `min_app_version` | — | Минимальная версия TL IDE |
 | `requires` | — | pip-зависимости: `["requests", "boto3"]` |
 | `versions` | — | История версий для даунгрейда (см. ниже) |
 
@@ -61,10 +70,10 @@ import os
 from sdk.base_plugin import PluginInterface
 
 
-class MyNewPlugin(PluginInterface):
+class MyPlugin(PluginInterface):
 
     def get_display_name(self) -> str:
-        return "My New Plugin"
+        return "My Plugin"
 
     def get_description(self) -> str:
         return "Одна строка — что делает плагин."
@@ -72,138 +81,99 @@ class MyNewPlugin(PluginInterface):
     def get_category(self) -> str:
         return "General"
 
-    def get_config_schema(self) -> dict:
-        return {
-            "input": {
-                "label": "Входные данные",
-                "type": "string",   # string | textarea | int | bool | select_or_input
-                "default": "",
-            },
-        }
+    def get_config_key(self) -> str:
+        # Ключ для config.yaml → plugins.<key>
+        return "my_plugin"
 
     def get_required_env(self) -> dict:
+        # Секреты: токены, пароли. TL IDE покажет диалог для ввода.
         return {
             "MY_TOKEN": {
                 "label": "Токен сервиса",
-                "description": "Получи на сайте сервиса → Settings → API",
+                "description": "Получи на сайте → Settings → API",
                 "secret": True,
             }
         }
 
-    def run(self, inputs: dict) -> str:
-        value = inputs.get("input", "")
-        token = os.getenv("MY_TOKEN", "")
-        base_url = self.config.get("base_url", "")
-        return f"**Результат:** {value}"
-```
+    def get_config_schema(self) -> dict:
+        return {
+            # config: True → раздел «Настройки плагина», задаётся один раз
+            "base_url": {
+                "label": "URL сервиса",
+                "type": "string",
+                "default": "https://api.example.com",
+                "config": True,
+            },
+            # без config → per-run поле, меняется каждый запуск
+            "query": {
+                "label": "Запрос",
+                "type": "string",
+                "default": "",
+            },
+        }
 
-> **Важно:** импорт всегда `from sdk.base_plugin import PluginInterface` (начиная с TL IDE 1.1.0).
+    def run(self, inputs: dict) -> str:
+        token    = os.getenv("MY_TOKEN", "")
+        base_url = inputs.get("base_url", "")
+        query    = inputs.get("query", "")
+        # ... реализация ...
+        return f"**Результат:** {query}"
+```
 
 ### 4. Сделай Pull Request
 
-Открой PR в этот репозиторий. После мержа мейнтейнер запустит `publish.py` и `registry.json` обновится.
+Открой PR в этот репозиторий. После мержа мейнтейнер запустит `publish.py` и `registry.json` обновится автоматически.
 
 ---
 
-## История версий плагина (versions)
+## Три уровня данных плагина
 
-Чтобы пользователи могли выбирать версию или откатиться назад, добавь в `manifest.json` поле `versions`:
+| Уровень | Где хранится у пользователя | Как объявить |
+|---|---|---|
+| **Секреты** (токены, пароли) | `.env` | `get_required_env()` |
+| **Настройки** (URL, дефолты) | Форма → сохраняется между запусками | `get_config_schema()` + `"config": True` |
+| **Per-run входные данные** | Форма → меняется каждый запуск | `get_config_schema()` без флага |
+
+### Типы полей формы
+
+| `type` | Виджет |
+|---|---|
+| `string` | Однострочный ввод |
+| `textarea` | Многострочный ввод (код, промпты) |
+| `int` | Числовой ввод |
+| `bool` | Чекбокс |
+| `select_or_input` | Выпадающий список + ручной ввод |
+
+---
+
+## История версий плагина
+
+Чтобы пользователи могли откатиться на старую версию, добавь в `manifest.json` поле `versions`:
 
 ```json
 {
   "name": "My Plugin",
   "version": "1.2.0",
-  "min_app_version": "1.1.0",
   "versions": [
     {
       "version": "1.0.0",
-      "raw_url": "https://raw.githubusercontent.com/org/repo/v1.0.0/general/my_plugin/plugin.py",
+      "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/v1.0.0/general/my_plugin/plugin.py",
       "changelog": "Первый релиз"
     },
     {
-      "version": "1.1.0",
-      "raw_url": "https://raw.githubusercontent.com/org/repo/v1.1.0/general/my_plugin/plugin.py",
-      "changelog": "Улучшена обработка ошибок"
-    },
-    {
       "version": "1.2.0",
-      "raw_url": "https://raw.githubusercontent.com/org/repo/master/general/my_plugin/plugin.py",
+      "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master/general/my_plugin/plugin.py",
       "changelog": "Поддержка нового API"
     }
   ]
 }
 ```
 
-В маркетплейсе TL IDE отобразит выпадающий список версий с кнопкой «Установить».
+В маркетплейсе TL IDE отобразит выпадающий список версий.
 
 ---
 
-## Как создать свой маркетплейс
-
-Любой Git-репозиторий с `registry.json` может стать маркетплейсом. Это удобно для внутрикорпоративных плагинов.
-
-### 1. Создай репозиторий
-
-Структура та же: `<category>/<plugin_name>/plugin.py` + `manifest.json`.
-
-### 2. Сгенерируй `registry.json`
-
-Скопируй `publish.py` из этого репо и поправь `REPO_RAW_BASE`:
-
-```python
-REPO_RAW_BASE = "https://raw.githubusercontent.com/your-org/your-plugins/master"
-```
-
-Запусти:
-
-```bash
-python publish.py
-```
-
-Закоммить и запушить `registry.json`.
-
-### 3. Подключи в TL IDE
-
-В TL IDE → Настройки → Маркетплейсы → добавь URL до `registry.json`:
-
-```
-https://raw.githubusercontent.com/your-org/your-plugins/master/registry.json
-```
-
-> Для приватных репозиториев GitHub передаёт токен через заголовок при запросе `raw.githubusercontent.com` — или используй GitHub Pages / любой CDN.
-
-### Автоматическая публикация через GitHub Actions
-
-```yaml
-# .github/workflows/publish.yml
-name: Publish registry
-on:
-  push:
-    branches: [master]
-    paths:
-      - '**/manifest.json'
-      - '**/plugin.py'
-
-jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - run: python publish.py
-      - uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "chore: update registry"
-          file_pattern: registry.json
-```
-
-После этого `registry.json` обновляется автоматически при каждом мерже в `master`.
-
----
-
-## Как публиковать вручную (для мейнтейнеров)
+## Как публиковать (для мейнтейнеров)
 
 ```bash
 python publish.py
@@ -212,49 +182,35 @@ git commit -m "chore: update registry"
 git push
 ```
 
----
+### Автоматически через GitHub Actions
 
-## Формат `registry.json`
+```yaml
+# .github/workflows/publish.yml
+name: Publish registry
+on:
+  push:
+    branches: [master]
+    paths: ["**/manifest.json", "**/plugin.py"]
 
-Генерируется автоматически из `manifest.json`. Пример записи:
-
-```json
-{
-  "id": "jira/issue_info",
-  "path": "jira/issue_info",
-  "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master/jira/issue_info/plugin.py",
-  "name": "Issue Info",
-  "category": "Jira",
-  "description": "Получить информацию по ключу задачи (PROJ-123).",
-  "author": "Ameight",
-  "version": "1.1.0",
-  "min_app_version": "1.1.0",
-  "requires": ["requests"]
-}
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: python publish.py
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update registry"
+          file_pattern: registry.json
 ```
 
-`raw_url` — прямая ссылка, по которой TL IDE скачивает `plugin.py` при установке.
-
 ---
 
-## Secrets и конфиг
+## Совместимость
 
-Плагины **не хранят** секреты в коде. Соглашение:
-
-| Что | Где хранить | Как читать |
-|-----|-------------|------------|
-| Токены, пароли | `.env` у пользователя | `os.getenv("VAR_NAME")` |
-| URL, настройки | `config.yaml` у пользователя | `self.config.get("key")` |
-
-Документируй нужные переменные через `get_required_env()` — TL IDE покажет предупреждение, если переменная не задана.
-
----
-
-## Совместимость версий
-
-| Версия плагина | `min_app_version` | Импорт |
-|:-:|:-:|---|
-| ≥ 1.1.0 | `1.1.0` | `from sdk.base_plugin import PluginInterface` |
-| 1.0.x | не указывать | `from plugins.base_plugin import PluginInterface` |
-
-Начиная с TL IDE 1.1.0 модуль `plugins` переименован в `sdk`. Плагины под старые версии приложения используют старый импорт.
+| `min_app_version` | Импорт |
+|:-:|---|
+| `1.1.0` и выше | `from sdk.base_plugin import PluginInterface` |
+| ниже `1.1.0` | `from plugins.base_plugin import PluginInterface` |

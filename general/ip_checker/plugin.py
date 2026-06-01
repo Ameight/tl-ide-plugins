@@ -14,10 +14,17 @@ class IpCheckerPlugin(PluginInterface):
         return "General"
 
     def get_config_schema(self) -> dict:
-        return {}
+        return {
+            "api_url": {
+                "label": "API URL",
+                "type": "string",
+                "default": "https://api.ipify.org",
+                "config": True,
+            },
+        }
 
     def run(self, inputs: dict) -> str:
-        api_url = self.config.get("api_url", "https://api.ipify.org")
+        api_url = inputs.get("api_url", "https://api.ipify.org").rstrip("/")
 
         try:
             response = requests.get(f"{api_url}?format=json", timeout=5)
