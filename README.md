@@ -186,14 +186,61 @@ general/my_plugin/
 
 ---
 
-## Как публиковать (для мейнтейнеров)
+## Инструмент управления — manage.py
+
+Единая точка входа для всех операций с маркетплейсом.
+
+### Интерактивное меню
 
 ```bash
-python publish.py
-git add registry.json
-git commit -m "chore: update registry"
-git push
+python manage.py
 ```
+
+Показывает текущее состояние (сколько плагинов, версий) и меню:
+
+```
+  1. Обновить registry.json
+  2. Добавить новый плагин
+  3. Добавить версию существующего плагина
+  4. Проверить плагины (lint)
+  5. Изменить конфигурацию
+  0. Выход
+```
+
+При первом запуске автоматически запускает мастер инициализации.
+
+### CLI-режим (для CI/CD)
+
+```bash
+python manage.py publish   # обновить registry.json (с валидацией)
+python manage.py lint      # проверить плагины (exit 1 при ошибках)
+python manage.py init      # настроить конфигурацию
+```
+
+`python publish.py` по-прежнему работает (тонкая обёртка над `manage.py publish`).
+
+### Добавить новый плагин
+
+`manage.py` спросит категорию (или предложит создать новую), имя, описание, автора и создаст готовый шаблон `plugin.py` + `manifest.json`.
+
+### Добавить версию плагина
+
+1. Выбираешь плагин из списка
+2. Вводишь новый номер версии
+3. Инструмент **автоматически**:
+   - Копирует `plugin.py` → `versions/<текущая_версия>.py`
+   - Обновляет `version` в `manifest.json`
+   - Добавляет changelog-запись
+4. Осталось только отредактировать `plugin.py` с новым кодом
+
+### Валидация (lint)
+
+Проверяет каждый плагин:
+- `manifest.json` — наличие, корректный JSON, все обязательные поля, semver-формат версии
+- `plugin.py` — наличие, синтаксис Python, наличие `PluginInterface` и метода `run()`
+- `versions/` — semver-имена файлов, наличие changelog-записей
+
+Ошибки блокируют публикацию; предупреждения показываются, но не блокируют.
 
 ### Автоматически через GitHub Actions
 
@@ -212,7 +259,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.11" }
-      - run: python publish.py
+      - run: python manage.py publish
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore: update registry"
