@@ -148,28 +148,41 @@ class MyPlugin(PluginInterface):
 
 ## История версий плагина
 
-Чтобы пользователи могли откатиться на старую версию, добавь в `manifest.json` поле `versions`:
+Храни старые версии прямо в репозитории — `publish.py` соберёт массив `versions[]` автоматически.
+
+### Структура
+
+```
+general/my_plugin/
+  plugin.py              ← текущая версия (всегда)
+  manifest.json
+  versions/
+    1.0.0.py             ← старые версии как отдельные файлы
+    1.1.0.py
+```
+
+### manifest.json
+
+Добавь `changelogs` — описания для каждой версии:
 
 ```json
 {
   "name": "My Plugin",
   "version": "1.2.0",
-  "versions": [
-    {
-      "version": "1.0.0",
-      "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/v1.0.0/general/my_plugin/plugin.py",
-      "changelog": "Первый релиз"
-    },
-    {
-      "version": "1.2.0",
-      "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master/general/my_plugin/plugin.py",
-      "changelog": "Поддержка нового API"
-    }
-  ]
+  "changelogs": {
+    "1.0.0": "Первый релиз",
+    "1.1.0": "Улучшена обработка ошибок",
+    "1.2.0": "Поддержка нового API"
+  }
 }
 ```
 
-В маркетплейсе TL IDE отобразит выпадающий список версий.
+`publish.py` автоматически:
+1. Сканирует `versions/*.py` → строит записи со ссылками на эти файлы
+2. Добавляет текущую версию (`plugin.py`) последней
+3. Записывает итоговый массив `versions[]` в `registry.json`
+
+В маркетплейсе TL IDE отобразит выпадающий список версий с возможностью даунгрейда.
 
 ---
 

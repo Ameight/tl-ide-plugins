@@ -6,9 +6,15 @@ publish.py — генерирует registry.json из всех плагинов
     python publish.py
     python publish.py --base-url https://raw.githubusercontent.com/org/repo/master
 
-Конфиг (publish.yaml):
-    base_url: https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master
-    output: registry.json
+Версии плагина:
+    Если рядом с plugin.py есть папка versions/, publish.py автоматически
+    собирает массив versions[] из файлов versions/X.Y.Z.py.
+    Описания версий берутся из поля changelogs в manifest.json:
+
+        "changelogs": {
+            "1.0.0": "Первый релиз",
+            "1.1.0": "Добавлено config-поле для API URL"
+        }
 """
 
 import argparse
@@ -58,6 +64,41 @@ def load_manifest(manifest_path: pathlib.Path) -> dict | None:
         return None
 
 
+def _build_versions(
+    plugin_dir: pathlib.Path,
+    base_url: str,
+    plugin_id: str,
+    current_version: str,
+    changelogs: dict,
+) -> list[dict]:
+    """Собирает массив versions[] из папки versions/ + текущей версии."""
+    versions_dir = plugin_dir / "versions"
+    entries: list[dict] = []
+
+    if versions_dir.is_dir():
+        for py_file in sorted(versions_dir.glob("*.py")):
+            ver = py_file.stem  # имя файла без расширения = версия
+            entry: dict = {
+                "version": ver,
+                "raw_url": f"{base_url}/{plugin_id}/versions/{py_file.name}",
+            }
+            if changelog := changelogs.get(ver, ""):
+                entry["changelog"] = changelog
+            entries.append(entry)
+
+    # Текущая версия всегда последней
+    current: dict = {
+        "version": current_version,
+        "raw_url": f"{base_url}/{plugin_id}/plugin.py",
+    }
+    if changelog := changelogs.get(current_version, ""):
+        current["changelog"] = changelog
+    entries.append(current)
+
+    # Если только одна версия — не добавляем массив (нет смысла)
+    return entries if len(entries) > 1 else []
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate registry.json for TL IDE Marketplace")
     parser.add_argument("--base-url", default=None, metavar="URL",
@@ -77,7 +118,7 @@ def main() -> None:
         if any(p in SKIP_DIRS for p in parts):
             continue
 
-        category_dir, plugin_dir, _ = parts
+        category_dir, plugin_dir_name, _ = parts
         plugin_py = manifest_path.parent / "plugin.py"
 
         if not plugin_py.exists():
@@ -88,14 +129,25 @@ def main() -> None:
         if not manifest:
             continue
 
-        plugin_id = f"{category_dir}/{plugin_dir}"
+        plugin_id = f"{category_dir}/{plugin_dir_name}"
+        changelogs: dict = manifest.pop("changelogs", {})
+        current_version: str = manifest.get("version", "")
+
+        versions = _build_versions(
+            manifest_path.parent, base_url, plugin_id, current_version, changelogs
+        )
+
         entry = {
             "id": plugin_id,
             "raw_url": f"{base_url}/{plugin_id}/plugin.py",
             **manifest,
         }
+        if versions:
+            entry["versions"] = versions
+
         registry.append(entry)
-        print(f"  ✅  {plugin_id}  ({manifest.get('name', '?')}  v{manifest.get('version', '?')})")
+        v_info = f"  [{len(versions)} версий]" if versions else ""
+        print(f"  ✅  {plugin_id}  ({manifest.get('name', '?')}  v{current_version}){v_info}")
 
     output.write_text(
         json.dumps(registry, ensure_ascii=False, indent=2) + "\n",

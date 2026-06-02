@@ -13,14 +13,26 @@
   {
     "id": "general/ip_checker",
     "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master/general/ip_checker/plugin.py",
-    "name": "IP checker",
+    "name": "IP Checker",
     "category": "General",
-    "description": "Получить информацию по своему IP.",
+    "description": "Определяет публичный IP-адрес машины через внешний API.",
     "author": "Ameight",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "min_app_version": "1.0.0",
     "requires": [
       "requests"
+    ],
+    "versions": [
+      {
+        "version": "1.0.0",
+        "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master/general/ip_checker/versions/1.0.0.py",
+        "changelog": "Первый релиз. API URL читается из config.yaml."
+      },
+      {
+        "version": "1.2.0",
+        "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master/general/ip_checker/plugin.py",
+        "changelog": "API URL вынесен в config-поле формы (задаётся в UI)."
+      }
     ]
   }
 ]
