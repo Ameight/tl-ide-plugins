@@ -5,5 +5,8 @@
   "author": "Ameight",
   "version": "1.0.0",
   "min_app_version": "1.1.0",
-  "requires": []
+  "requires": [],
+  "changelogs": {
+    "1.0.0": "Первый релиз. Демо всех типов полей (string, textarea, int, bool, select_or_input), config-полей и env-переменных."
+  }
 }
