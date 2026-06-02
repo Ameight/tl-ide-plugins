@@ -554,7 +554,9 @@ def _print_status(plugins: list[PluginInfo]) -> None:
 # ── Вспомогательные функции ввода ─────────────────────────────────────────────
 def _prompt(question: str, default: str = "") -> str:
     hint = f" [{default}]" if default else ""
-    return (input(f"{question}{hint}: ").strip()) or default
+    val = (input(f"{question}{hint}: ").strip()) or default
+    # macOS/Windows sometimes inject lone surrogates via input(); strip them
+    return val.encode("utf-8", errors="replace").decode("utf-8")
 
 
 def _prompt_choice(question: str, choices: list[str], default: str) -> str:
