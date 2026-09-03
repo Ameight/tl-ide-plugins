@@ -8,7 +8,31 @@
     "author": "Ameight",
     "version": "1.0.0",
     "min_app_version": "1.1.0",
-    "requires": []
+    "requires": [],
+    "versions": [
+      {
+        "version": "1.0.0",
+        "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master/general/example_plugin/plugin.py",
+        "changelog": "Первый релиз. Демо всех типов полей (string, textarea, int, bool, select_or_input), config-полей и env-переменных."
+      }
+    ]
+  },
+  {
+    "id": "general/hello_world",
+    "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master/general/hello_world/plugin.py",
+    "name": "Hello World",
+    "category": "General",
+    "description": "Пример плагина.",
+    "author": "Ameight",
+    "version": "1.0.0",
+    "requires": [],
+    "versions": [
+      {
+        "version": "1.0.0",
+        "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master/general/hello_world/plugin.py",
+        "changelog": "Первый релиз."
+      }
+    ]
   },
   {
     "id": "general/ip_checker",
@@ -32,6 +56,44 @@
         "version": "1.2.0",
         "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master/general/ip_checker/plugin.py",
         "changelog": "API URL вынесен в config-поле формы (задаётся в UI)."
+      }
+    ]
+  },
+  {
+    "id": "gitlab/gitlab_mr_stats",
+    "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master/gitlab/gitlab_mr_stats/plugin.py",
+    "name": "GitLab MR Stats",
+    "category": "GitLab",
+    "description": "Статистика по MR (GraphQL): аппрувы, комментарии, обсуждения. URL, проекты и участники настраиваются через конфиг.",
+    "author": "Ameight",
+    "version": "1.0.0",
+    "requires": [
+      "requests"
+    ],
+    "versions": [
+      {
+        "version": "1.0.0",
+        "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master/gitlab/gitlab_mr_stats/plugin.py",
+        "changelog": "Первый релиз. URL GitLab, проекты и участники — настраиваются через конфиг."
+      }
+    ]
+  },
+  {
+    "id": "jira/move_tickets",
+    "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master/jira/move_tickets/plugin.py",
+    "name": "Перемещение тикетов в Jira",
+    "category": "Jira",
+    "description": "Переносит закрытые задачи из исходного эпика в целевой по полю Epic-Link.",
+    "author": "Ameight",
+    "version": "1.0.0",
+    "requires": [
+      "jira"
+    ],
+    "versions": [
+      {
+        "version": "1.0.0",
+        "raw_url": "https://raw.githubusercontent.com/Ameight/tl-ide-plugins/master/jira/move_tickets/plugin.py",
+        "changelog": "Первый релиз. URL, поля Epic-Link, кастомный ID и статусы — настраиваются через конфиг."
       }
     ]
   }

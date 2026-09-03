@@ -10,6 +10,9 @@
 |---|---|---|
 | [IP Checker](general/ip_checker/) | General | Определяет публичный IP-адрес машины |
 | [Example: все возможности](general/example_plugin/) | General | Демо всех типов полей и config-настроек |
+| [Hello World](general/hello_world/) | General | Пример плагина |
+| [GitLab MR Stats](gitlab/gitlab_mr_stats/) | GitLab | Статистика по MR: аппрувы, комментарии, обсуждения |
+| [Перемещение тикетов в Jira](jira/move_tickets/) | Jira | Переносит закрытые задачи из одного эпика в другой |
 
 ---
 
@@ -17,7 +20,7 @@
 
 ```
 tl-ide-plugins/
-  publish.py              ← генерирует registry.json
+  manage.py               ← управление: publish / lint / add_plugin
   registry.json           ← индекс всех плагинов (автогенерат)
   manifest.schema.json    ← схема для валидации manifest.json
   <category>/
@@ -122,7 +125,7 @@ class MyPlugin(PluginInterface):
 
 ### 4. Сделай Pull Request
 
-Открой PR в этот репозиторий. После мержа мейнтейнер запустит `publish.py` и `registry.json` обновится автоматически.
+Открой PR в этот репозиторий. После мержа мейнтейнер запустит `python manage.py publish` и `registry.json` обновится автоматически.
 
 ---
 
@@ -148,7 +151,7 @@ class MyPlugin(PluginInterface):
 
 ## История версий плагина
 
-Храни старые версии прямо в репозитории — `publish.py` соберёт массив `versions[]` автоматически.
+Храни старые версии прямо в репозитории — `manage.py publish` соберёт массив `versions[]` автоматически.
 
 ### Структура
 
@@ -177,7 +180,7 @@ general/my_plugin/
 }
 ```
 
-`publish.py` автоматически:
+`manage.py publish` автоматически:
 1. Сканирует `versions/*.py` → строит записи со ссылками на эти файлы
 2. Добавляет текущую версию (`plugin.py`) последней
 3. Записывает итоговый массив `versions[]` в `registry.json`
@@ -216,8 +219,6 @@ python manage.py publish   # обновить registry.json (с валидаци
 python manage.py lint      # проверить плагины (exit 1 при ошибках)
 python manage.py init      # настроить конфигурацию
 ```
-
-`python publish.py` по-прежнему работает (тонкая обёртка над `manage.py publish`).
 
 ### Добавить новый плагин
 

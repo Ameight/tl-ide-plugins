@@ -1,0 +1,13 @@
+{
+  "name": "GitLab MR Stats",
+  "category": "GitLab",
+  "description": "Статистика по MR (GraphQL): аппрувы, комментарии, обсуждения. URL, проекты и участники настраиваются через конфиг.",
+  "author": "Ameight",
+  "version": "1.0.0",
+  "requires": [
+    "requests"
+  ],
+  "changelogs": {
+    "1.0.0": "Первый релиз. URL GitLab, проекты и участники — настраиваются через конфиг."
+  }
+}

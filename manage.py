@@ -220,7 +220,9 @@ def _build_versions_list(p: PluginInfo, base_url: str) -> list[dict]:
     if cl := changelogs.get(current_ver):
         current["changelog"] = cl
     entries.append(current)
-    return entries if len(entries) > 1 else []
+    # Возвращаем список всегда (включая единственную текущую версию), чтобы
+    # changelog текущей версии публиковался и не терялся у плагинов с одной версией.
+    return entries
 
 
 def cmd_publish() -> None:

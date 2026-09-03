@@ -1,0 +1,11 @@
+{
+  "name": "Hello World",
+  "category": "General",
+  "description": "Пример плагина.",
+  "author": "Ameight",
+  "version": "1.0.0",
+  "requires": [],
+  "changelogs": {
+    "1.0.0": "Первый релиз."
+  }
+}
